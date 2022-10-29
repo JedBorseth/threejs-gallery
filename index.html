@@ -35,5 +35,11 @@
       class="absolute top-0 bottom-0 left-0 right-0 m-auto bg-indigo-800 rounded-full w-10 h-10 bg-opacity-50 border-0"
     ></button>
     <script type="module" src="/src/main.ts"></script>
+    <script src="/lib/three.min.js"></script>
+    <script src="/src/DeviceOrientationController.js"></script>
+    <script>
+      controls = new DeviceOrientationController(camera, renderer.domElement);
+      controls.connect();
+    </script>
   </body>
 </html>
