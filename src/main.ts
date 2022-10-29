@@ -391,6 +391,11 @@ if (ctrlsBtn) {
     document.getElementById("helpinfo")?.classList.add("hidden");
     document.getElementById("credits")?.classList.add("hidden");
   });
+  ctrlsBtn.addEventListener("touchend", () => {
+    controls.lock();
+    document.getElementById("helpinfo")?.classList.add("hidden");
+    document.getElementById("credits")?.classList.add("hidden");
+  });
 }
 camera.updateProjectionMatrix();
 controls.connect();
