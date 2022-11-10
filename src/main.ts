@@ -103,6 +103,7 @@ createLight(-5, 10, -30);
 createLight(0, 10, 10);
 createLight(10, 100, 0);
 createLight(-100, 100, 0);
+createLight(100, 100, 0);
 
 // Text Loader
 const textLoader = new FontLoader(manager);
