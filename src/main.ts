@@ -103,6 +103,7 @@ createLight(-5, 10, -30);
 createLight(0, 10, 10);
 createLight(10, 100, 0);
 createLight(-100, 100, 0);
+
 // Text Loader
 const textLoader = new FontLoader(manager);
 textLoader.load("./font.json", function (font) {
@@ -143,7 +144,8 @@ const generateProject = (
   sitePath: string,
   description: Array<string>,
   pos: { x: number; y: number; z: number },
-  textureList: Array<Texture>
+  textureList: Array<Texture>,
+  rotate: boolean
 ) => {
   const group = new THREE.Group();
   const wood = new THREE.MeshBasicMaterial({ map: textureList[1] });
@@ -234,6 +236,9 @@ const generateProject = (
   // Add Group to scene
   group.name = name;
   group.position.set(pos.x, pos.y, pos.z);
+  if (rotate) {
+    group.rotateY(3.14159);
+  }
   scene.add(group);
 
   projectsArr.push({ name: name, id: group.id, url: sitePath });
@@ -250,7 +255,8 @@ generateProject(
     "Click poster to go to live site!",
   ],
   { x: 15, y: 6, z: -10 },
-  textureList
+  textureList,
+  false
 );
 generateProject(
   "THREEjs Gallery",
@@ -262,22 +268,36 @@ generateProject(
     "This is the site your currently on!",
   ],
   { x: 15, y: 6, z: 0 },
-  textureList
+  textureList,
+  false
 );
 generateProject(
-  "Spotify Clone",
+  "Portfolio Site",
   1,
-  "",
-  "https://spotify.com",
+  "./images/portfolio.png",
+  "https://jedborseth.com",
+  ["Personal | AstroJS, React, Tailwind", "Click poster to go to live site!"],
+  { x: 15, y: 6, z: 10 },
+  textureList,
+  false
+);
+
+generateProject(
+  "Movie Search",
+  1,
+  "./images/movie-search.png",
+  "https://search.jedborseth.com/",
   [
-    "Personal | NextJS, Middleware, SpotifyAPI",
+    "Personal | React, Tailwind, Typescript",
     "Click poster to go to live site!",
   ],
-  { x: 15, y: 6, z: 10 },
-  textureList
+  { x: -10, y: 6, z: 10 },
+  textureList,
+  true
 );
+
 //
-// Raycast
+// Raycaster
 //
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
@@ -298,15 +318,22 @@ const handleClicks = (click: any) => {
   console.log(click[0].object.parent);
   if (click[0].object.parent.name) {
     let projectPos = click[0].object.parent.position;
+    console.log(projectPos.x);
+    let projectView: number;
+    if (projectPos.x > 0) {
+      projectView = -5;
+    } else {
+      projectView = 5;
+    }
     if (
-      camera.position.x === projectPos.x - 5 &&
+      camera.position.x === projectPos.x + projectView &&
       camera.position.z === projectPos.z
     ) {
       projectsArr.forEach((i) => {
         if (i.id === click[0].object.parent.id) {
           new TWEEN.Tween(coords)
             .to({
-              x: camera.position.x + 5,
+              x: camera.position.x - projectView,
               y: camera.position.y + 1,
               z: camera.position.z,
             })
@@ -326,7 +353,11 @@ const handleClicks = (click: any) => {
         projectPos = click[0].object.parent.parent.position;
       }
       new TWEEN.Tween(coords)
-        .to({ x: projectPos.x - 5, y: camera.position.y, z: projectPos.z })
+        .to({
+          x: projectPos.x + projectView,
+          y: camera.position.y,
+          z: projectPos.z,
+        })
         .onUpdate((e: coordsTypes) => {
           camera.position.set(e.x, e.y, e.z);
         })
