@@ -355,7 +355,7 @@ const handleClicks = (click: any) => {
       }
       new TWEEN.Tween(coords)
         .to({
-          x: projectPos.x + projectView,
+          x: projectPos.x - projectView,
           y: camera.position.y,
           z: projectPos.z,
         })
