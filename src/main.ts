@@ -5,6 +5,7 @@ import * as THREE from "three";
 import * as TWEEN from "@tweenjs/tween.js";
 import { Event, Texture } from "three";
 // Colors & Settings
+const developerMode = false;
 const textColor = 0x9042f5;
 const helpers = false;
 // Init Controls & Renderer
@@ -35,7 +36,6 @@ const bgMesh = new THREE.Mesh(
 bgMesh.material.depthTest = false;
 bgMesh.material.depthWrite = false;
 backgroundScene.add(bgMesh);
-console.log(backgroundScene);
 // backgroundScene.add(bgMesh);
 
 // Defining Materials
@@ -316,25 +316,34 @@ const handleClicks = (click: any) => {
     y: camera.position.y,
     z: camera.position.z,
   };
-  console.log(click[0].object.parent);
+  // Checking if click is on project
   if (click[0].object.parent.name) {
     let projectPos = click[0].object.parent.position;
-    console.log(projectPos.x);
+
     let projectView: number;
     if (projectPos.x > 0) {
-      projectView = -5;
-    } else {
       projectView = 5;
+    } else {
+      projectView = -5;
     }
+    if (click[0].object.parent.name === "projectBase") {
+      // Checking if click is on project base then comparing the position of the camera to the position of the project not the base group pos
+      if (click[0].object.parent.parent.position.x > 0) {
+        projectView = 5;
+      } else {
+        projectView = -5;
+      }
+    }
+
     if (
-      camera.position.x === projectPos.x + projectView &&
+      camera.position.x + projectView === projectPos.x &&
       camera.position.z === projectPos.z
     ) {
       projectsArr.forEach((i) => {
         if (i.id === click[0].object.parent.id) {
           new TWEEN.Tween(coords)
             .to({
-              x: camera.position.x - projectView,
+              x: camera.position.x + projectView,
               y: camera.position.y + 1,
               z: camera.position.z,
             })
@@ -436,19 +445,21 @@ window.addEventListener("resize", () => {
   camera.updateProjectionMatrix();
   renderer.setSize(window.innerWidth, window.innerHeight);
 });
-document.addEventListener("keypress", (e) => {
-  if (e.key === "p") {
-    console.log(scene);
-    console.log(projectsArr);
-    console.log(camera);
-  }
-  if (e.key === "o") {
-    camera.position.set(1, 15, 1);
-  }
-  if (e.key === "w") {
-    controls.moveForward(1);
-  }
-});
+if (developerMode) {
+  document.addEventListener("keypress", (e) => {
+    if (e.key === "p") {
+      console.log(scene);
+      console.log(projectsArr);
+      console.log(camera);
+    }
+    if (e.key === "o") {
+      camera.position.set(1, 15, 1);
+    }
+    if (e.key === "w") {
+      controls.moveForward(1);
+    }
+  });
+}
 
 window.addEventListener("pointermove", onPointerMove);
 document.addEventListener("click", () => {
